@@ -59,3 +59,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+import os
+print("\nAbrindo indice.txt automaticamente...")
+os.startfile("indice.txt")
