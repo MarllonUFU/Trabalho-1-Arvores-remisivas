@@ -8,30 +8,33 @@ def normalizar(p):
 def main():
     avl = AVL()
     total = 0
-    repetidas = 0
+    palavras_distintas = set()
+    palavras_repetidas = 0
 
     inicio = time.time()
 
     with open("texto_origem.txt", encoding="utf-8") as f:
         for i, linha in enumerate(f, start=1):
-            palavras = linha.split()
-            for p in palavras:
+            palavras_linha = set()
+            for p in linha.split():
                 palavra = normalizar(p)
                 if palavra:
                     total += 1
-                    antes = len(avl.busca_prefixo(palavra))
+
+                    if palavra in palavras_distintas:
+                        palavras_repetidas += 1
+                    else:
+                        palavras_distintas.add(palavra)
+
                     avl.inserir(palavra, i)
-                    depois = len(avl.busca_prefixo(palavra))
-                    if depois == antes:
-                        repetidas += 1
+                    palavras_linha.add(palavra)
 
     fim = time.time()
 
-    distintas = total - repetidas
     stats = {
         "Total de palavras": total,
-        "Total de palavras distintas": distintas,
-        "Total de palavras descartadas": repetidas,
+        "Total de palavras distintas": len(palavras_distintas),
+        "Total de palavras descartadas": palavras_repetidas,
         "Tempo de construção": f"{fim - inicio:.4f}s",
         "Total de rotações": avl.rotacoes
     }
@@ -41,9 +44,18 @@ def main():
     print("Índice gerado com sucesso!")
     print("Palavra mais frequente:", avl.palavra_mais_frequente())
 
-    # Exemplo de busca
     termo = "alg"
     print("Busca por prefixo:", avl.busca_prefixo(termo))
+
+    # Exemplo de busca com ME
+    palavra_busca = "amor"
+    res = avl.buscar(palavra_busca)
+    if res == -1:
+        print(f"'{palavra_busca}' não encontrada.")
+    elif res == 0:
+        print(f"'{palavra_busca}' encontrada. ME = 0 (equilibrado).")
+    else:
+        print(f"'{palavra_busca}' encontrada. ME diferente de zero.")
 
 if __name__ == "__main__":
     main()
